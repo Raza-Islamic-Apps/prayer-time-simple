@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> Daily Prayer Timetable </title>
+	<style>
+		body, td, th {font-family: verdana; font-size: 12px; color: #404040;}
+		#timetable {border-width: 1px; border-style: outset; border-collapse: collapse; border-color: gray; width: 9em;}
+		#timetable td, #timetable th {border-width: 1px; border-spacing: 1px; padding: 2px 4px; border-style: inset; border-color: #CCCCCC;}
+		#timetable th {color:black; text-align: center; font-weight: bold; background-color: #F8F7F4;}
+	</style>
+
+  <script type="text/javascript" src="PrayTimes.js"></script>
+  <script type="text/javascript">
+    var date = new Date(); //today
+
+      var times = getUpdatedTime();
+
+    function getUpdatedTime(){
+
+      var coordinates = [53.400205, -6.344556];
+
+
+      if(document.getElementById('location').value == "Dublin")
+        coordinates = [53.400205, -6.344556];
+      else if(document.getElementById('location').value == "Navan")
+        coordinates = [53.644737, -6.651185];
+      else if(document.getElementById('location').value == "Cork")
+          coordinates = [51.898858, -8.475408];
+      else if(document.getElementById('location').value == "Letterkenny")
+          coordinates = [54.966710, -7.758941];
+      else if(document.getElementById('location').value == "Galway")
+        coordinates = [53.270664, -9.056823];
+      else if(document.getElementById('location').value == "Drogheda")
+          coordinates = [53.717862, -6.355936];
+      else if(document.getElementById('location').value == "Limerick")
+          coordinates = [52.663688, -8.625837];
+      else if(document.getElementById('location').value == "Portlaoise")
+          coordinates = [53.042502, -7.267714];
+			else if(document.getElementById('location').value == "My Current Location"){
+			  if (navigator.geolocation) {
+
+			    position = navigator.geolocation.getCurrentPosition();
+					alert("Inside.");
+
+					coordinates = [position.coords.latitude, position.coords.longitude];
+			  } else {
+			    alert("Geolocation is not supported by this browser.");
+			  }
+			}
+
+      prayTimes.setMethod('Tehran');//Methods: Tehran, Jafari
+      return prayTimes.getTimes(date, coordinates, 0);
+    }
+
+    function refreshTable()
+    {
+
+     if(document.getElementById('datepicker').value != ""){
+        date = new Date(document.getElementById('datepicker').value);
+     }
+
+      var list = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha', 'Midnight'];
+       times = getUpdatedTime();
+
+       var html = '<table id="timetable">';
+      html += '<tr><th colspan="2">'+ date.toLocaleDateString()+ '</th></tr>';
+      for(var i in list)	{
+        html += '<tr><td>'+ list[i]+ '</td>';
+        html += '<td>'+ times[list[i].toLowerCase()]+ '</td></tr>';
+      }
+      html += '</table>';
+
+      document.getElementById('table').innerHTML = html;
+    }
+  </script>
+
+
+
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="jquery-ui.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="jquery-1.12.4.js"></script>
+    <script src="jquery-ui.js"></script>
+    <script>
+    $( function() {
+      $( "#datepicker" ).datepicker();
+    } );
+    </script>
+
+
+</head>
+
+<body onload="javascript:refreshTable();">
+
+<form action="#">
+  <p align="center">Date: <input type="text" id="datepicker" onchange="javascript:refreshTable()"></p>
+  <div align="center" id="locationSelector">
+  Location: <select id="location" onChange="javascript:refreshTable()">
+    <option value="Cork">Cork</option>
+  <option value="Drogheda">Drogheda</option>
+  <option  value="Dublin" selected="true">Dublin</option>
+  <option value="Galway">Galway</option>
+  <option value="Letterkenny">Letterkenny</option>
+  <option value="Limerick">Limerick</option>
+  <option value="Navan">Navan</option>
+  <option value="Portlaoise">Portlaoise</option>
+	<option value="My Current Location">My Current Location</option>
+
+</select>
+</div><br/>
+  <div align="center" id="table"></div>
+</form>
+
+</body>
+</html>
